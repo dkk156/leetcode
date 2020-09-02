@@ -1,0 +1,75 @@
+给定一个字符串，请将字符串里的字符按照出现的频率降序排列。
+答：方法一：可以先遍历字符串，将字符串中的字符作为key，出现的频率作为value存储在一个map集合中，然后，将map集合中的数据，按照大顶堆存放在优先队列中，然后将队列中的数据依次取出放在字符数组中。
+class Solution {
+     public String frequencySort(String s) {
+         if (s == null) {
+            return null;
+        }
+        HashMap<Character, Integer> map = new HashMap<>();
+        for (int i = 0; i < s.length(); i++) {
+            Character c = s.charAt(i);
+            if (map.containsKey(c)) {
+                map.put(c, map.get(c) + 1);
+            } else {
+                map.put(c, 1);
+            }
+        }
+        PriorityQueue<Character> pq = new PriorityQueue<>(
+                new Comparator<Character>() {
+                    @Override
+                    public int compare(Character o1, Character o2) {
+                        return map.get(o2) - map.get(o1);
+                    }
+                }
+        );
+        for (Character c : map.keySet()) {
+            pq.add(c);
+        }
+        char[] chars = new char[s.length()];
+        int i=0;
+        while (i < s.length()) {
+            Character poll = pq.poll();
+            for (int j = 0; j < map.get(poll); j++) {
+                chars[i] = poll;
+                i++;
+            }
+        }
+        return String.valueOf(chars);
+        
+
+    }
+}
+
+方法二，可以先遍历字符串，将字符串中的字符作为key，出现的频率作为value存储在一个map集合中，然后，将map集合中的数据，存放在数组中，索引就是map集合中的value值，数组的值就是对应的key
+class Solution {
+      public String frequencySort(String s) {
+        Map<Character, Integer> map = new HashMap<>();
+        for (char c : s.toCharArray()) {
+            map.put(c, map.getOrDefault(c, 0) + 1);
+        }
+
+        List<Character>[] lists = new ArrayList[s.length() + 1];
+        for (Character key : map.keySet()) {
+            Integer value = map.get(key);
+            if (lists[value] == null) {
+                lists[value] = new ArrayList<>();
+            }
+            lists[value].add(key);
+        }
+        StringBuilder sb = new StringBuilder();
+        for (int i = lists.length - 1; i >= 0; i--) {
+            if (lists[i] == null) {
+                continue;
+            }
+            for (Character c : lists[i]) {
+                for (int j = 0; j < i; j++) {
+                    sb.append(c);
+                }
+            }
+            
+        }
+        return sb.toString();
+        
+
+    }
+}
